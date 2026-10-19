@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; script-src 'self'; connect-src https://cloudflare-dns.com; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>Free Email Spoofing Check | Sealbridge Security</title>
+<meta name="description" content="Check whether scammers can send email that looks like it came from your brokerage or title office, and whether lookalike domains already exist. Free, in about 30 seconds.">
+<link rel="canonical" href="https://sealbridgesecurity.com/check.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&amp;display=swap">
+<link rel="stylesheet" href="styles.css">
+<script src="check.js" defer></script>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="index.html" aria-label="Sealbridge Security home">
+      <svg class="mark" width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28.5" fill="none" stroke="#14243B" stroke-width="5"/><path d="M18 25 V41 M46 25 V41" stroke="#14243B" stroke-width="3"/><path d="M6.1 31 L10 31 Q14 29.5 18 22 Q22 29.5 26 31 L38 31 Q42 29.5 46 22 Q50 29.5 54 31 L57.9 31" fill="none" stroke="#B35A17" stroke-width="5" stroke-linejoin="round"/><line x1="5" y1="41" x2="59" y2="41" stroke="#14243B" stroke-width="5"/><path d="M15.5 41 H20.5 V51 H15.5 Z M43.5 41 H48.5 V51 H43.5 Z" fill="#14243B"/></svg>
+      <span class="brand-text"><span class="brand-name">Sealbridge</span><span class="brand-sub">Security</span></span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        <li><a href="index.html#services">Services</a></li>
+        <li><a href="check.html" aria-current="page">Free spoofing check</a></li>
+        <li><a href="index.html#about">About</a></li>
+        <li><a class="btn btn-small" href="index.html#contact">Book a Security Check</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero hero-short">
+  <div class="wrap">
+    <p class="eyebrow">Free tool · about 30 seconds</p>
+    <h1>Can scammers send email as your office?</h1>
+    <p class="lede">Enter your office's email domain. We check its public anti-spoofing settings and look for lookalike domains that scammers use to fake wiring instructions.</p>
+  </div>
+</section>
+
+<section class="checker" aria-labelledby="checker-h">
+  <div class="wrap">
+    <h2 id="checker-h" class="visually-hidden">Run the check</h2>
+    <form id="check-form" class="check-form" novalidate>
+      <label for="domain">Your email domain</label>
+      <div class="check-row">
+        <input id="domain" name="domain" type="text" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="yourbrokerage.com" required>
+        <button class="btn" type="submit" id="check-btn">Check my domain</button>
+      </div>
+      <p class="fine">You can also paste an email address. Only public DNS records are read; nothing is stored. Lookups run in your browser through Cloudflare's public DNS service.</p>
+    </form>
+
+    <noscript><p class="notice">This check needs JavaScript. Turn it on, or <a href="index.html#contact">ask us to run it for you</a>.</p></noscript>
+
+    <div id="status" class="status" role="status" aria-live="polite"></div>
+    <div id="results" class="results" hidden></div>
+  </div>
+</section>
+
+<section class="explain" aria-labelledby="explain-h">
+  <div class="wrap about-inner">
+    <h2 id="explain-h">What this checks</h2>
+    <p><strong>DMARC</strong> tells other mail servers what to do with email that pretends to be from your domain. Only "quarantine" or "reject" actually stops it.</p>
+    <p><strong>SPF</strong> lists the services allowed to send your email. Ending it with "-all" tells receivers to refuse everyone else.</p>
+    <p><strong>DKIM</strong> signs your outgoing email. We look for the signing keys Microsoft 365 and Google Workspace use; other providers use names we can't guess, so "not found" isn't always a problem.</p>
+    <p><strong>Lookalike domains</strong> are names one typo away from yours. If one is registered and can handle email, a scammer can use it to send fake wiring instructions that look real at a glance.</p>
+    <p class="fine">This is an automated first look, not a full assessment. A Closing Security Check also covers sign-in security, hidden forwarding rules and your wire-verification steps.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© 2026 Sealbridge Security · Baton Rouge area, Louisiana</p>
+    <p><a href="https://github.com/sealbridgesecurity/website/security">Report a security issue</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
