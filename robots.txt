@@ -1,2 +1,4 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://sealbridgesecurity.com/sitemap.xml

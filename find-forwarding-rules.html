@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self'; script-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<title>How to Find Hidden Email Forwarding Rules in Microsoft 365 | Sealbridge Security</title>
+<meta name="description" content="Step-by-step: how to find and stop hidden inbox rules and mailbox forwarding in Microsoft 365, the trick attackers use to watch closing emails and hide replies.">
+<link rel="canonical" href="https://sealbridgesecurity.com/find-forwarding-rules.html">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta property="og:title" content="How to Find Hidden Email Forwarding Rules in Microsoft 365 | Sealbridge Security">
+<meta property="og:description" content="Step-by-step: how to find and stop hidden inbox rules and mailbox forwarding in Microsoft 365, the trick attackers use to watch closing emails and hide replies.">
+<meta property="og:url" content="https://sealbridgesecurity.com/find-forwarding-rules.html">
+<meta property="og:type" content="article">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&amp;family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&amp;display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap header-inner">
+    <a class="brand" href="/" aria-label="Sealbridge Security home">
+      <svg class="mark" width="40" height="40" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="28.5" fill="none" stroke="#14243B" stroke-width="5"/><path d="M18 25 V41 M46 25 V41" stroke="#14243B" stroke-width="3"/><path d="M6.1 31 L10 31 Q14 29.5 18 22 Q22 29.5 26 31 L38 31 Q42 29.5 46 22 Q50 29.5 54 31 L57.9 31" fill="none" stroke="#B35A17" stroke-width="5" stroke-linejoin="round"/><line x1="5" y1="41" x2="59" y2="41" stroke="#14243B" stroke-width="5"/><path d="M15.5 41 H20.5 V51 H15.5 Z M43.5 41 H48.5 V51 H43.5 Z" fill="#14243B"/></svg>
+      <span class="brand-text"><span class="brand-name">Sealbridge</span><span class="brand-sub">Security</span></span>
+    </a>
+    <nav aria-label="Main">
+      <ul class="nav">
+        <li><a href="/#services">Services</a></li>
+        <li><a href="check.html">Free spoofing check</a></li>
+        <li><a href="resources.html" aria-current="page">Guides</a></li>
+        <li><a href="/#about">About</a></li>
+        <li><a class="btn btn-small" href="/#contact">Book a Security Check</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero hero-short">
+  <div class="wrap">
+    <p class="eyebrow">Guide · Microsoft 365</p>
+    <h1>How to find hidden email forwarding rules in Microsoft 365</h1>
+    <p class="lede">Attackers who get into a mailbox often add a rule that quietly copies closing emails to themselves or hides replies. Here's how to find those rules and turn off outside forwarding.</p>
+  </div>
+</section>
+
+<article class="article">
+  <div class="wrap article-inner">
+    <p class="byline">By Ed Dupuy, Sealbridge Security · Updated October 20, 2026</p>
+
+    <div class="answer">
+      <p class="answer-label">The short answer</p>
+      <p>Check three places: each mailbox's forwarding setting, each mailbox's inbox rules (including hidden ones), and your organization-wide setting for forwarding to outside addresses. Then set outside auto-forwarding to Off and make sure someone reads Microsoft's forwarding alerts.</p>
+    </div>
+
+    <h2 id="why">Why attackers use forwarding rules</h2>
+    <p>Once a scammer has a password, they want to watch the closing without being noticed. A rule can forward every email that mentions "wire", "closing" or "payoff" to an outside address, or move replies from the real buyer into a folder nobody opens. The rule keeps working even after the password is changed, so removing it is part of every cleanup.</p>
+    <p>Rules like these often have short or meaningless names, such as a single period, so they're easy to overlook.</p>
+
+    <h2 id="users">Step 1: Have each person check their own Outlook</h2>
+    <p>This takes two minutes per person and needs no admin access.</p>
+    <ol class="steps-list">
+      <li>Open Outlook on the web (outlook.office.com) and click the gear icon for <strong>Settings</strong>.</li>
+      <li>Go to <strong>Mail → Forwarding</strong>. Forwarding should be off unless you set it up on purpose.</li>
+      <li>Go to <strong>Mail → Rules</strong>. Look for any rule you didn't create, especially ones that forward, redirect, delete, or move messages to folders like Archive, RSS Feeds or Conversation History.</li>
+    </ol>
+    <p>If anything looks unfamiliar, don't delete it yet. Take a screenshot and tell your administrator; see <a href="#found-one">what to do if you find one</a>.</p>
+
+    <h2 id="admin">Step 2: Check every mailbox's forwarding as an admin</h2>
+    <p>In the Microsoft 365 admin center, go to <strong>Users → Active users</strong>, select a person, open the <strong>Mail</strong> tab and look at <strong>Email forwarding</strong>. Microsoft renames these menus from time to time, so the labels may differ slightly. (<a href="https://learn.microsoft.com/en-us/exchange/recipients/user-mailboxes/email-forwarding">Microsoft: configure email forwarding</a>)</p>
+    <p>For more than a few people, PowerShell is faster and also finds rules the admin center doesn't show. You'll need an Exchange admin account and the ExchangeOnlineManagement module.</p>
+    <p class="code-label">Connect (run once per session)</p>
+<pre><code>Install-Module ExchangeOnlineManagement   # first time only
+Connect-ExchangeOnline</code></pre>
+    <p class="code-label">Mailboxes with forwarding turned on</p>
+<pre><code>Get-EXOMailbox -ResultSize Unlimited -Properties ForwardingAddress,ForwardingSmtpAddress,DeliverToMailboxAndForward |
+  Where-Object { $_.ForwardingAddress -or $_.ForwardingSmtpAddress } |
+  Format-Table DisplayName,ForwardingAddress,ForwardingSmtpAddress,DeliverToMailboxAndForward</code></pre>
+
+    <h2 id="rules">Step 3: List every inbox rule that forwards, deletes or moves mail</h2>
+<pre><code>Get-EXOMailbox -ResultSize Unlimited | ForEach-Object {
+  Get-InboxRule -Mailbox $_.UserPrincipalName -IncludeHidden |
+    Where-Object { $_.ForwardTo -or $_.ForwardAsAttachmentTo -or $_.RedirectTo -or $_.DeleteMessage -or $_.MoveToFolder } |
+    Select-Object MailboxOwnerId,Name,Enabled,ForwardTo,ForwardAsAttachmentTo,RedirectTo,DeleteMessage,MoveToFolder
+}</code></pre>
+    <p><code>-IncludeHidden</code> matters: it shows rules that don't appear in Outlook. Some hidden rules are normal system rules, so focus on any that send mail to an outside address or move mail somewhere unusual.</p>
+    <p>Also check organization-wide mail flow rules, which an attacker with admin access could add:</p>
+<pre><code>Get-TransportRule | Where-Object { $_.RedirectMessageTo -or $_.BlindCopyTo -or $_.CopyTo -or $_.AddToRecipients } |
+  Format-Table Name,State,RedirectMessageTo,BlindCopyTo,CopyTo,AddToRecipients</code></pre>
+
+    <h2 id="block">Step 4: Turn off forwarding to outside addresses</h2>
+    <p>Microsoft 365 can block automatic forwarding to external addresses for the whole organization. The default setting, "Automatic - System-controlled," behaves differently in different tenants, so Microsoft recommends choosing On or Off explicitly. (<a href="https://learn.microsoft.com/en-us/defender-office-365/outbound-spam-policies-external-email-forwarding">Microsoft: control automatic external email forwarding</a>)</p>
+    <ol class="steps-list">
+      <li>Open the Microsoft Defender portal (security.microsoft.com).</li>
+      <li>Go to <strong>Email &amp; collaboration → Policies &amp; rules → Threat policies → Anti-spam</strong>.</li>
+      <li>Open <strong>Anti-spam outbound policy (Default)</strong> and edit its protection settings.</li>
+      <li>Set <strong>Automatic forwarding rules</strong> to <strong>Off - Forwarding is disabled</strong> and save.</li>
+    </ol>
+    <p>This stops both inbox-rule forwarding and mailbox forwarding to outside addresses. Forwarding between people inside your organization still works. If one person truly needs to forward outside, create a separate policy just for them rather than turning it back on for everyone.</p>
+
+    <h2 id="alerts">Step 5: Make sure someone sees the alerts</h2>
+    <p>Microsoft includes two default alert policies in many Microsoft 365 plans (<a href="https://learn.microsoft.com/en-us/defender-xdr/alert-policies">Microsoft: alert policies</a>):</p>
+    <ul>
+      <li><strong>Creation of forwarding/redirect rule:</strong> someone created an inbox rule that forwards or redirects mail (informational).</li>
+      <li><strong>Suspicious email forwarding activity:</strong> a mailbox auto-forwarded email to a suspicious outside account (high).</li>
+    </ul>
+    <p>In the Defender portal, under <strong>Policies &amp; rules → Alert policy</strong>, check that these are on and that alert emails go to someone who reads them every business day.</p>
+
+    <h2 id="found-one">If you find a rule you didn't create</h2>
+    <ol class="steps-list">
+      <li><strong>Record it first.</strong> Screenshot or export the rule details. Your insurer and investigators will want them.</li>
+      <li><strong>Lock the account.</strong> Reset the password, sign the user out of all sessions in the admin center, and remove any sign-in methods (phone numbers or authenticator apps) the user didn't add.</li>
+      <li><strong>Remove the rule</strong> and any forwarding on the mailbox.</li>
+      <li><strong>Look at what was exposed.</strong> Check sent items, deleted items and the sign-in log for the past few weeks.</li>
+      <li><strong>Call everyone in open closings</strong> by phone to warn them that emails from that mailbox may have been fake, and re-verify any wiring instructions sent recently.</li>
+    </ol>
+    <p class="fine">Using Google Workspace instead? Each person can check Gmail under <strong>Settings → See all settings → Forwarding and POP/IMAP</strong> and <strong>Filters and Blocked Addresses</strong>.</p>
+
+    <aside class="check-cta">
+      <h2>Want someone to check this for you?</h2>
+      <p>A Closing Security Check covers sign-in security, hidden forwarding rules, lookalike domains and your wire-verification steps, with a written fix list. $750 for up to 10 users.</p>
+      <a class="btn btn-light" href="/#contact">Book a Security Check</a>
+    </aside>
+
+    <h2 id="sources" class="sources-h">Sources</h2>
+    <ul class="sources">
+      <li><a href="https://learn.microsoft.com/en-us/defender-office-365/outbound-spam-policies-external-email-forwarding">Microsoft Learn, Control automatic external email forwarding in Microsoft 365</a></li>
+      <li><a href="https://learn.microsoft.com/en-us/defender-xdr/alert-policies">Microsoft Learn, Alert policies in the Microsoft Defender portal</a></li>
+      <li><a href="https://learn.microsoft.com/en-us/exchange/recipients/user-mailboxes/email-forwarding">Microsoft Learn, Configure email forwarding for a mailbox</a></li>
+    </ul>
+
+  </div>
+</article>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap footer-inner">
+    <p>© 2026 Sealbridge Security · Baton Rouge area, Louisiana</p>
+    <p><a href="resources.html">Guides</a> · <a href="https://github.com/sealbridgesecurity/website/security">Report a security issue</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
