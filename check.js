@@ -59,7 +59,7 @@
     return doh(domain, 'MX').then(function (j) {
       var mx = (j.Answer || []).filter(function (a) { return a.type === 15; }).map(function (a) {
         var parts = String(a.data).split(/\s+/); return (parts[1] || parts[0]).replace(/\.$/, '');
-      });
+      }).filter(Boolean);
       var provider = null;
       var all = mx.join(' ');
       if (/protection\.outlook\.com/.test(all)) provider = 'Microsoft 365';
@@ -102,7 +102,8 @@
     });
   }
 
-  function checkDKIM(domain, provider) {
+  function checkDKIM(domain, provider, noMail) {
+    if (noMail) return Promise.resolve({ level: 'info', title: 'DKIM: not needed', detail: 'This domain has no mail servers, so it doesn’t send or receive email and needs no signing keys. For a domain like this, a DMARC policy of "reject" and an SPF record ending in "-all" are what stop scammers from sending as it.' });
     var selectors = provider === 'Google Workspace' ? ['google'] : provider === 'Microsoft 365' ? ['selector1', 'selector2'] : ['selector1', 'selector2', 'google', 'k1', 'default'];
     return Promise.all(selectors.map(function (s) {
       var name = s + '._domainkey.' + domain;
@@ -262,7 +263,7 @@
     checkMX(domain).then(function (mx) {
       if (mx.nxdomain) throw new Error(domain + ' doesn’t exist in DNS. Check the spelling and try again.');
       statusEl.textContent = 'Checking ' + domain + '’s anti-spoofing settings…';
-      return Promise.all([checkDMARC(domain), checkSPF(domain), checkDKIM(domain, mx.provider)]).then(function (checks) {
+      return Promise.all([checkDMARC(domain), checkSPF(domain), checkDKIM(domain, mx.provider, mx.mx.length === 0)]).then(function (checks) {
         var list = lookalikes(domain);
         return runPool(list, 6, probe, function (d, n) { statusEl.textContent = 'Looking for lookalike domains… ' + d + ' of ' + n; })
           .then(function (looks) { return { mx: mx, checks: checks, looks: looks, tried: list.length }; });
