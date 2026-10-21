@@ -201,7 +201,7 @@ table.data td:first-child{white-space:nowrap;font-weight:600;color:var(--navy)}
 .guide-card p{color:var(--body);margin:0}
 .guide-card .section-label{margin-bottom:8px}
 .guides-home{padding:56px 0}
-.guides-home .guide-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+.guides-home .guide-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
 @media (max-width:760px){
   .guide-grid,.guides-home .guide-grid{grid-template-columns:1fr}
   table.data td:first-child{white-space:normal}
