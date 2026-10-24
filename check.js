@@ -233,12 +233,12 @@
 
     // Call to action
     var cta = el('div', 'check-cta');
-    cta.appendChild(el('h2', null, bad || warn || risky.length ? 'Want these gaps fixed before your next closing?' : 'Email settings are only part of the picture.'));
-    cta.appendChild(el('p', null, 'A Closing Security Check reviews sign-in security, hidden forwarding rules and your wire-verification steps, and sends you a written fix list. $750 for up to 10 users.'));
-    var body = 'Hi Ed,\n\nI ran the free spoofing check on ' + domain + ' and would like to talk about the results.\n\nSummary: ' + verdict.text + '\n' +
+    cta.appendChild(el('h2', null, bad || warn || risky.length ? 'Want a clear plan for these gaps before your next closing?' : 'Email settings are only part of the picture.'));
+    cta.appendChild(el('p', null, 'A Security Check reviews sign-in security, hidden forwarding rules and lookalike domains, and gives you a written fix list your IT provider can work from. It starts with a 15-minute call, and any work is quoted after that call.'));
+    var body = 'Hi Ed,\n\nI ran the free spoofing check on ' + domain + ' and would like to book a 15-minute call about the results.\n\nSummary: ' + verdict.text + '\n' +
       checks.map(function (c) { return '- ' + c.title; }).join('\n') +
       '\n- Lookalike domains registered: ' + (risky.length + parked.length) + ' of ' + tried + ' (' + risky.length + ' can send email)\n\nOffice name:\nNumber of people using email:\nBest time to call:\n';
-    var a = el('a', 'btn', 'Email Ed about these results');
+    var a = el('a', 'btn', 'Book a 15-minute call');
     a.href = 'mailto:' + CONTACT + '?subject=' + encodeURIComponent('Spoofing check results for ' + domain) + '&body=' + encodeURIComponent(body);
     cta.appendChild(a);
     results.appendChild(cta);
