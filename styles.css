@@ -152,7 +152,7 @@ section h2{font-size:clamp(28px,4vw,38px)}
 .lookalike-mail{font-weight:600;color:#8A2C0D}
 .check-cta{background:var(--navy);color:#fff;padding:28px;margin:32px 0 18px}
 .check-cta h2{color:#fff;margin-top:0;font-size:26px}
-.check-cta p{color:#DCE3EC}
+.check-cta p,.article .check-cta p{color:#DCE3EC}
 .explain{background:var(--mist)}
 .explain p{color:var(--body)}
 .tool-callout{background:var(--mist);padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;margin-top:28px}
