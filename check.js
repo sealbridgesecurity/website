@@ -255,7 +255,7 @@
     e.preventDefault();
     var domain = normalize(input.value);
     results.hidden = true;
-    if (!domain) { statusEl.textContent = 'Please enter a domain like yourbrokerage.com, or an email address.'; input.focus(); return; }
+    if (!domain) { statusEl.textContent = 'Please enter a domain like yourfirm.com, or an email address.'; input.focus(); return; }
     input.value = domain;
     button.disabled = true;
     statusEl.textContent = 'Checking ' + domain + '…';
