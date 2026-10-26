@@ -1,5 +1,5 @@
 Contact: https://github.com/sealbridgesecurity/website/security/advisories/new
-Contact: mailto:ed.dupuy@gmail.com
+Contact: mailto:ed@sealbridgesecurity.com
 Expires: 2027-10-19T00:00:00.000Z
 Preferred-Languages: en
 Canonical: https://sealbridgesecurity.com/.well-known/security.txt
