@@ -5,7 +5,7 @@
 
 (function () {
   var DOH = 'https://cloudflare-dns.com/dns-query';
-  var CONTACT = 'ed.dupuy@gmail.com';
+  var CONTACT = 'ed@sealbridgesecurity.com';
   var TLD_SWAPS = ['com', 'net', 'org', 'co', 'us', 'info', 'biz'];
   var MAX_LOOKALIKES = 60;
 
