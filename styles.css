@@ -90,6 +90,7 @@ section h2{font-size:clamp(28px,4vw,38px)}
 .contact p{color:#DCE3EC}
 .contact-inner{max-width:640px}
 .contact-alt{margin-top:14px;font-size:15px}
+.contact-alt a{color:#fff;text-decoration:underline}
 
 /* Footer */
 .site-footer{background:var(--navy-dark);color:#C9D3E1;font-size:14px;padding:22px 0}
