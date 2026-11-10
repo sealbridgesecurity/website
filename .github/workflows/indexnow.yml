@@ -1,0 +1,57 @@
+name: IndexNow
+
+# After Cloudflare Pages finishes deploying a push to main, tell IndexNow
+# search engines (Bing, Yandex and others) which pages changed.
+# Google does not use IndexNow; the sitemap still covers Google.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: # run by hand to submit every page in the sitemap
+
+permissions:
+  contents: read
+  checks: read
+
+concurrency:
+  group: indexnow
+  cancel-in-progress: false
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Wait for the Cloudflare Pages deploy
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          SHA: ${{ github.sha }}
+        run: |
+          for i in $(seq 1 60); do
+            run=$(gh api "repos/$REPO/commits/$SHA/check-runs?check_name=Cloudflare%20Pages" \
+              --jq '.check_runs[0] | "\(.status) \(.conclusion)"' 2>/dev/null || true)
+            echo "Cloudflare Pages: ${run:-not reported yet}"
+            case "$run" in
+              "completed success") exit 0 ;;
+              completed*) echo "Deploy did not succeed; not submitting."; exit 1 ;;
+            esac
+            sleep 20
+          done
+          echo "Timed out waiting for the deploy."; exit 1
+
+      - name: Submit to IndexNow
+        env:
+          BEFORE: ${{ github.event.before }}
+          SHA: ${{ github.sha }}
+        run: |
+          if [ "${{ github.event_name }}" = "push" ] && [ -n "$BEFORE" ] \
+             && [ "$BEFORE" != "0000000000000000000000000000000000000000" ] \
+             && git cat-file -e "$BEFORE^{commit}" 2>/dev/null; then
+            python3 .github/scripts/indexnow.py changed "$BEFORE" "$SHA"
+          else
+            python3 .github/scripts/indexnow.py all
+          fi
